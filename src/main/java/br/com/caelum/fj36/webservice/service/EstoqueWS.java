@@ -6,8 +6,12 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
+import javax.xml.ws.ResponseWrapper;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by nando on 03/07/17.
@@ -27,13 +31,12 @@ public class EstoqueWS {
     }
 
 
-    @WebMethod
+    @WebMethod(operationName = "itensPeloCodigo")
     @WebResult(name = "itemEstoque")
-    public ItemEstoque getQuantidade(@WebParam(name = "codigo") String codigo){
-        ItemEstoque itemEstoque = repositorio.get(codigo);
+    @ResponseWrapper(localName = "itens")
+    public List<ItemEstoque> getQuantidade(@WebParam(name = "codigo") List<String> codigos){
+        if (codigos == null) return Collections.emptyList();
 
-        System.out.println(itemEstoque);
-
-        return itemEstoque;
+        return codigos.stream().map(codigo -> repositorio.get(codigo)).collect(Collectors.toList());
     }
 }
